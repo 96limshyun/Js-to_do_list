@@ -26,6 +26,7 @@
             values: {
                 videoImageCound: 300,
                 imageSequence: [0, 299],
+                canvas_opacity: [1, 0, { start: 0.9, end: 1 }],
                 // opacity_in
                 messageA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }],
                 messageB_opacity_in: [0, 1, { start: 0.3, end: 0.4 }],
@@ -69,9 +70,17 @@
                 messageB: document.querySelector('#scroll-section-2 .b'),
                 messageC: document.querySelector('#scroll-section-2 .c'),
                 pinB: document.querySelector('#scroll-section-2 .b .pin'),
-                pinC: document.querySelector('#scroll-section-2 .c .pin')
+                pinC: document.querySelector('#scroll-section-2 .c .pin'),
+                canvas: document.querySelector('#video-canvas-1'),
+                context: document.querySelector('#video-canvas-1').getContext('2d'),
+                videoImages: []
             },
             values: {
+                videoImageCound: 960,
+                imageSequence: [0, 959],
+                canvas_opacity_in: [0, 1, { start: 0, end: 0.1 }],
+                canvas_opacity_out: [1, 0, { start: 0.95, end: 1 }],
+
                 messageA_translateY_in: [20, 0, { start: 0.15, end: 0.2 }],
                 messageB_translateY_in: [30, 0, { start: 0.5, end: 0.55 }],
                 messageC_translateY_in: [30, 0, { start: 0.72, end: 0.77 }],
@@ -114,6 +123,13 @@
             imgElem.src = `./video/001/IMG_${6726 + i}.JPG`;
             sceneInfo[0].objs.videoImages.push(imgElem);
         }
+
+        let imgElem2;
+        for (let i = 0; i < sceneInfo[2].values.videoImageCound; i++) {
+            imgElem2 = new Image();
+            imgElem2.src = `./video/002/IMG_${7027 + i}.JPG`;
+            sceneInfo[2].objs.videoImages.push(imgElem2);
+        }
     }
     setCanvasImages();
 
@@ -141,7 +157,9 @@
         document.body.setAttribute('id', `show-scene-${currentScene}`);
 
         const heightRatio = window.innerHeight / 1080;
+        // 크기 조절
         sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`;
+        sceneInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`;
     }
     // 현재 씬(스크롤섹션)에서 스크롤된 범위를 비율로 구하기 함수
     function calcValues(values, currentYOffset) {
@@ -182,6 +200,7 @@
                 // console.log('0 play');
                 let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
                 objs.context.drawImage(objs.videoImages[sequence], 0, 0);
+                objs.canvas.style.opacity = calcValues(values.canvas_opacity, currentYOffset);
 
                 if (scrollRatio <= 0.22) {
                     // in
@@ -227,7 +246,18 @@
 
             case 2:
                 // console.log('2 play');
-                if (scrollRatio <= 0.25) {
+                let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset));
+                objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
+
+                if (scrollRatio <= 0.1) {
+                    // in
+                    objs.canvas.style.opacity = calcValues(values.canvas_opacity_in, currentYOffset);
+                } else {
+                    // out
+                    objs.canvas.style.opacity = calcValues(values.canvas_opacity_out, currentYOffset);
+                }
+
+                if (scrollRatio <= 0.32) {
                     // in
                     objs.messageA.style.opacity = calcValues(values.messageA_opacity_in, currentYOffset);
                     objs.messageA.style.transform = `translate3d(0, ${calcValues(values.messageA_translateY_in, currentYOffset)}%, 0)`;
@@ -299,6 +329,9 @@
         yOffset = window.pageYOffset;
         scrollLoop();
     });
-    window.addEventListener('load', setLayout);
+    window.addEventListener('load', () => {
+        setLayout();
+        sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
+    });
     window.addEventListener('resize', setLayout); // 화면 크기에 따라 변환
 })();

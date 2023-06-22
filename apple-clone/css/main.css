@@ -74,6 +74,9 @@ a {
 }
 
 #scroll-section-0 h1 {
+    position: relative;
+    top: -10vh;
+    z-index: 5;
     font-size: 4rem;
     text-align: center;
 }
@@ -123,6 +126,7 @@ a {
 .desc-message {
     width: 50%;
     font-weight: bold;
+    opacity: 0;
 }
 
 .pin {
@@ -186,7 +190,7 @@ a {
 .sticky-elem-canvas {
     top: 0;
     height: 100%;
-    background: #ccc;
+    /* background: #ccc; */
 }
 
 .sticky-elem-canvas canvas {
