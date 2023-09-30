@@ -1,0 +1,18 @@
+body {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.main-box {
+    /* display: block;
+    margin: 0 auto; */
+    /* text-align: center; */
+    border: solid 1px gray;
+    width: 500px;
+}
+
+.search-box {
+    margin: 10px auto;
+}
+
